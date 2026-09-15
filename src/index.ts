@@ -109,7 +109,7 @@ async function apiRequest(
   const url = `${API_BASE_URL}${endpoint}`
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    'x-api-key': API_KEY!,
+    'Authorization': `Bearer ${API_KEY!}`,
   }
 
   try {
@@ -207,14 +207,6 @@ function getToolsForRole(): any[] {
 
       // Consumer management
       {
-        name: 'list_consumers',
-        description: 'List all consumers for this partner',
-        inputSchema: {
-          type: 'object',
-          properties: {},
-        },
-      },
-      {
         name: 'create_consumer',
         description: 'Create a new consumer with API key',
         inputSchema: {
@@ -310,7 +302,7 @@ function getToolsForRole(): any[] {
       // Analytics
       {
         name: 'get_dashboard',
-        description: 'Get partner dashboard with analytics',
+        description: 'Get partner dashboard with analytics, consumer list, key metrics, and usage statistics',
         inputSchema: {
           type: 'object',
           properties: {},
@@ -351,6 +343,14 @@ function getToolsForRole(): any[] {
           properties: {},
         },
       },
+      {
+        name: 'get_api_documentation',
+        description: 'Fetch the partner API OpenAPI specification for learning available endpoints, request/response formats, and authentication requirements',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+        },
+      },
     ]
   }
 
@@ -365,7 +365,6 @@ const PARTNER_TOOLS = new Set([
   'create_service',
   'update_service',
   'configure_service_auth',
-  'list_consumers',
   'create_consumer',
   'get_consumer',
   'rotate_consumer_key',
@@ -382,6 +381,7 @@ const CONSUMER_TOOLS = new Set([
   'get_analytics',
   'rotate_my_key',
   'get_plan_info',
+  'get_api_documentation',
 ])
 
 /**
@@ -427,9 +427,6 @@ async function handleToolCall(name: string, args: any): Promise<any> {
       }
 
       // Partner - Consumer Management
-      case 'list_consumers':
-        return await apiRequest('/partner/consumer')
-
       case 'create_consumer':
         return await apiRequest('/partner/consumer/create', 'POST', {
           email: args.email,
@@ -492,6 +489,46 @@ async function handleToolCall(name: string, args: any): Promise<any> {
 
       case 'get_plan_info':
         return await apiRequest('/consumer/my-plans')
+
+      case 'get_api_documentation': {
+        // Get dashboard to extract partner documentation URL
+        const dashboard = await apiRequest('/consumer/dashboard')
+        const docUrl = dashboard?.consumer?.partner_documentation_url
+
+        if (!docUrl) {
+          throw new Error('Partner has not configured API documentation URL')
+        }
+
+        // Fetch the OpenAPI spec from partner's documentation URL
+        // Try common OpenAPI spec endpoints
+        const possibleUrls = [
+          docUrl.endsWith('/docs/json') ? docUrl : `${docUrl.replace(/\/docs$/, '')}/docs/json`,
+          docUrl.endsWith('/openapi.json') ? docUrl : `${docUrl.replace(/\/$/, '')}/openapi.json`,
+          docUrl.endsWith('/swagger.json') ? docUrl : `${docUrl.replace(/\/$/, '')}/swagger.json`,
+        ]
+
+        for (const url of possibleUrls) {
+          try {
+            const response = await fetch(url, {
+              headers: { 'Accept': 'application/json' }
+            })
+
+            if (response.ok) {
+              const spec = await response.json()
+              return {
+                documentation_url: docUrl,
+                openapi_spec_url: url,
+                spec
+              }
+            }
+          } catch (err) {
+            // Try next URL
+            continue
+          }
+        }
+
+        throw new Error(`Could not fetch OpenAPI spec from ${docUrl}. Partner must expose spec at /docs/json, /openapi.json, or /swagger.json`)
+      }
 
       default:
         throw new Error(`Unknown tool: ${name}`)
