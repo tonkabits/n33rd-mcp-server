@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "n33rd-partner": {
+      "command": "npx",
+      "args": ["-y", "@tonkabits/n33rd-mcp-server"],
+      "env": {
+        "N33RD_API_KEY": "your_partner_api_key_here",
+        "N33RD_ROLE": "partner",
+        "N33RD_URL": "https://api.n33rd.com"
+      }
+    },
+    "n33rd-consumer": {
+      "command": "npx",
+      "args": ["-y", "@tonkabits/n33rd-mcp-server"],
+      "env": {
+        "N33RD_API_KEY": "your_consumer_api_key_here",
+        "N33RD_ROLE": "consumer",
+        "N33RD_URL": "https://api.n33rd.com"
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "@tonkabits/n33rd-mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server for N33RD platform - allows AI agents to manage services, keys, and consumers",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "n33rd-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "dev": "tsx src/index.ts",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "n33rd",
+    "api-management",
+    "ai-agents"
+  ],
+  "author": "N33RD",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tonkabits/n33rd-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tonkabits/n33rd-mcp-server/issues"
+  },
+  "homepage": "https://github.com/tonkabits/n33rd-mcp-server#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
