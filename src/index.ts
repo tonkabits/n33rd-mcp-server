@@ -358,9 +358,44 @@ function getToolsForRole(): any[] {
 }
 
 /**
+ * Tool access control by role
+ */
+const PARTNER_TOOLS = new Set([
+  'list_services',
+  'create_service',
+  'update_service',
+  'configure_service_auth',
+  'list_consumers',
+  'create_consumer',
+  'get_consumer',
+  'rotate_consumer_key',
+  'revoke_consumer_key',
+  'reactivate_consumer_key',
+  'toggle_consumer_key',
+  'list_plans',
+  'create_plan',
+  'get_dashboard',
+])
+
+const CONSUMER_TOOLS = new Set([
+  'get_dashboard',
+  'get_analytics',
+  'rotate_my_key',
+  'get_plan_info',
+])
+
+/**
  * Handle tool execution
  */
 async function handleToolCall(name: string, args: any): Promise<any> {
+  // Enforce role-based access control at execution time
+  if (ROLE === 'partner' && !PARTNER_TOOLS.has(name)) {
+    throw new Error(`Tool '${name}' is not available for partner role`)
+  }
+  if (ROLE === 'consumer' && !CONSUMER_TOOLS.has(name)) {
+    throw new Error(`Tool '${name}' is not available for consumer role`)
+  }
+
   try {
     switch (name) {
       // Partner - Service Management
