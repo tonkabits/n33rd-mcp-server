@@ -56,12 +56,6 @@ An **MCP (Model Context Protocol) server** that exposes the entire N33RD platfor
 - Check plan limits
 - Monitor costs
 
-**Admin Role** (4 tools):
-- Platform-wide analytics
-- Partner management (upgrade/downgrade tiers)
-- Cron job monitoring
-- System health checks
-
 ### 🛠️ Available Operations
 
 **Service Management:**
