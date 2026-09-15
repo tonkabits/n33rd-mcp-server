@@ -204,6 +204,36 @@ function getToolsForRole(): any[] {
           required: ['service_id', 'auth_type', 'auth_config'],
         },
       },
+      {
+        name: 'configure_health_monitoring',
+        description: 'Enable or disable health monitoring for a service, configure health check URL and interval',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            service_id: { type: 'string', description: 'Service ID (UUID)' },
+            health_check_enabled: { type: 'boolean', description: 'Enable or disable health monitoring' },
+            health_check_url: { type: 'string', description: 'Health check endpoint path (default: /health)' },
+            health_check_interval_minutes: { type: 'number', description: 'Check interval in minutes (5-60)' },
+          },
+          required: ['service_id', 'health_check_enabled'],
+        },
+      },
+      {
+        name: 'get_service_health',
+        description: 'Get current health status and history for a service',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            service_id: { type: 'string', description: 'Service ID (UUID)' },
+            period: {
+              type: 'string',
+              enum: ['24h', '7d'],
+              description: 'Time period for health data (24h or 7d)'
+            },
+          },
+          required: ['service_id'],
+        },
+      },
 
       // Consumer management
       {
@@ -365,6 +395,8 @@ const PARTNER_TOOLS = new Set([
   'create_service',
   'update_service',
   'configure_service_auth',
+  'configure_health_monitoring',
+  'get_service_health',
   'create_consumer',
   'get_consumer',
   'rotate_consumer_key',
@@ -424,6 +456,26 @@ async function handleToolCall(name: string, args: any): Promise<any> {
           auth_type: args.auth_type,
           auth_config: args.auth_config,
         })
+      }
+
+      case 'configure_health_monitoring': {
+        const serviceId = validateId(args.service_id, 'service_id')
+        const body: any = {
+          health_check_enabled: args.health_check_enabled
+        }
+        if (args.health_check_url !== undefined) {
+          body.health_check_url = args.health_check_url
+        }
+        if (args.health_check_interval_minutes !== undefined) {
+          body.health_check_interval_minutes = args.health_check_interval_minutes
+        }
+        return await apiRequest(`/partner/services/${encodePath(serviceId)}/health`, 'PATCH', body)
+      }
+
+      case 'get_service_health': {
+        const serviceId = validateId(args.service_id, 'service_id')
+        const period = args.period || '24h'
+        return await apiRequest(`/partner/services/${encodePath(serviceId)}/health?period=${period}`)
       }
 
       // Partner - Consumer Management
