@@ -302,46 +302,6 @@ Would you like me to:
 
 ---
 
-## Admin: Partner Tier Management
-
-```
-User: Partner "TechAPI Inc" just signed an enterprise contract.
-Upgrade them to pro_500k tier.
-
-Claude: I'll upgrade TechAPI Inc to the pro_500k tier immediately.
-
-[Uses get_partner tool first to verify]
-
-Current partner status:
-- Name: TechAPI Inc
-- Email: admin@techapi.com
-- Current tier: pro_100k (100,000 req/month)
-- Usage this month: 94,230 requests (94% of quota)
-- Consumers: 45
-
-[Uses update_partner_tier tool]
-
-✅ Upgrade successful!
-
-New tier: pro_500k
-- Monthly quota: 500,000 requests
-- Free consumer keys: 5,000 (was 1,000)
-- Trial consumer keys: 1,000 (was 250)
-- Features: Custom branding, priority support, advanced analytics
-
-The upgrade is effective immediately. TechAPI Inc can now:
-- Create 4,000 more free consumer keys
-- Handle 5x more monthly traffic
-- Access advanced analytics dashboard
-
-Should I:
-- Send confirmation email to admin@techapi.com?
-- Notify their consumers about service improvements?
-- Update billing to reflect enterprise pricing?
-```
-
----
-
 ## Multi-Agent Collaboration: AI Managing AI
 
 ```

@@ -79,11 +79,6 @@ An **MCP (Model Context Protocol) server** that exposes the entire N33RD platfor
 **Analytics:**
 - `get_dashboard` (partner/consumer specific)
 - `get_analytics` (detailed usage)
-- `get_platform_dashboard` (admin only)
-
-**Administration:**
-- `update_partner_tier` (free → pro_100k → pro_250k → pro_500k)
-- `list_cron_logs` (monitor daily key resets)
 
 ## Real-World Use Cases
 
@@ -180,91 +175,6 @@ n33rd-mcp-server/
 ├── QUICKSTART.md            # 5-minute setup guide
 └── PROJECT_SUMMARY.md       # This file
 ```
-
-## Future Enhancements
-
-### Phase 1: Enhanced Tools (Next)
-- [ ] Webhook configuration via MCP
-- [ ] Batch operations (create 100 consumers at once)
-- [ ] Advanced filtering (find all consumers with >80% usage)
-- [ ] Export capabilities (CSV, JSON, PDF reports)
-
-### Phase 2: Resources (Future)
-- [ ] Expose consumers as MCP resources (not just tools)
-- [ ] Expose services as MCP resources
-- [ ] Real-time subscriptions to usage events
-- [ ] Streaming analytics data
-
-### Phase 3: Prompts (Future)
-- [ ] Pre-built prompts for common workflows
-- [ ] "Create beta program" prompt (creates landing page, consumer keys, emails)
-- [ ] "Security audit" prompt (scans for abuse, generates report)
-- [ ] "Cost optimization" prompt (analyzes usage, suggests savings)
-
-### Phase 4: Multi-Tenant (Future)
-- [ ] Support multiple N33RD accounts in one config
-- [ ] Switch between accounts via tool parameters
-- [ ] Cross-account analytics and reporting
-
-## Success Metrics
-
-**Developer Experience:**
-- Setup time: <5 minutes (vs. hours of custom API integration)
-- Lines of code: 0 (vs. hundreds for custom integration)
-- Maintenance: Zero (vs. ongoing API version updates)
-
-**Operational Efficiency:**
-- Consumer onboarding: Automated (vs. manual approval/key creation)
-- Key rotation: Automated (vs. manual security response)
-- Usage monitoring: Real-time (vs. daily manual checks)
-- Tier upgrades: Automatic (vs. manual Stripe operations)
-
-**Platform Growth:**
-- Enable AI-to-AI API marketplace
-- Reduce support burden (self-service via AI)
-- Attract AI-native companies as partners
-- Position as "most AI-friendly API platform"
-
-## Comparison: MCP vs. Traditional Integration
-
-| Feature | Traditional API Client | MCP Server |
-|---------|----------------------|------------|
-| Setup time | Hours (code, auth, error handling) | Minutes (config file) |
-| Maintenance | Ongoing (API changes, auth refresh) | Zero (SDK handles it) |
-| Multi-account | Complex (separate credentials) | Simple (multiple configs) |
-| Natural language | No (must write code) | Yes (ask Claude) |
-| AI-native | No (humans write code) | Yes (AI uses directly) |
-| Learning curve | High (read API docs) | Low (ask questions) |
-| Flexibility | Limited to implemented features | Full API access |
-
-## Example Conversation
-
-```
-User: I need to set up a new API service and create 5 test keys
-
-Claude (without MCP):
-"I can help guide you through that. First, go to your dashboard at
-https://n33rd.com/partner/settings/services and click 'Add Service'.
-Then fill in the form with your API details..."
-
-Claude (with MCP):
-"I'll set that up for you right now."
-[Uses create_service tool]
-[Uses create_consumer tool 5 times]
-"Done! Your service is live at https://api.n33rd.com/p/yourname/myapi
-and here are your 5 test API keys:
-1. myapi_live_abc123...
-2. myapi_live_def456...
-..."
-```
-
-## Why This Is Revolutionary
-
-1. **Zero-code integration**: Non-technical users can manage complex API operations via natural language
-2. **AI-to-AI economy**: Enables fully automated API marketplace where AIs buy/sell API access
-3. **Self-healing systems**: AI agents can detect and fix issues automatically (rotate compromised keys, upgrade tiers, etc.)
-4. **Intelligent optimization**: AI can analyze usage patterns and suggest cost/performance improvements
-5. **Platform differentiation**: Only API platform with native AI agent support
 
 ## Getting Started
 
