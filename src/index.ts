@@ -164,10 +164,14 @@ function getToolsForRole(): any[] {
           type: 'object',
           properties: {
             name: { type: 'string', description: 'Service name' },
-            description: { type: 'string', description: 'Service description' },
-            base_url: { type: 'string', description: 'Base URL for the service' },
+            service_url: { type: 'string', description: 'Base URL for the service' },
+            auth_type: { type: 'string', enum: ['none', 'bearer', 'api_key', 'basic'], description: 'Authentication type (default: none)' },
+            endpoint_mode: { type: 'string', enum: ['passthrough', 'strict'], description: 'Endpoint mode (default: passthrough)' },
+            openapi_spec_url: { type: 'string', description: 'URL to OpenAPI/Swagger spec for endpoint sync' },
+            timeout_ms: { type: 'number', description: 'Timeout in milliseconds (1000-120000, default: 30000)' },
+            retry_attempts: { type: 'number', description: 'Number of retry attempts (0-5, default: 1)' },
           },
-          required: ['name', 'base_url'],
+          required: ['name', 'service_url'],
         },
       },
       {
@@ -178,8 +182,13 @@ function getToolsForRole(): any[] {
           properties: {
             service_id: { type: 'string', description: 'Service ID' },
             name: { type: 'string', description: 'Service name' },
-            description: { type: 'string', description: 'Service description' },
-            base_url: { type: 'string', description: 'Base URL for the service' },
+            service_url: { type: 'string', description: 'Base URL for the service' },
+            auth_type: { type: 'string', enum: ['none', 'bearer', 'api_key', 'basic'], description: 'Authentication type' },
+            endpoint_mode: { type: 'string', enum: ['passthrough', 'strict'], description: 'Endpoint mode' },
+            openapi_spec_url: { type: 'string', description: 'URL to OpenAPI/Swagger spec' },
+            timeout_ms: { type: 'number', description: 'Timeout in milliseconds (1000-120000)' },
+            retry_attempts: { type: 'number', description: 'Number of retry attempts (0-5)' },
+            is_enabled: { type: 'boolean', description: 'Enable/disable the service' },
           },
           required: ['service_id'],
         },
@@ -434,20 +443,31 @@ async function handleToolCall(name: string, args: any): Promise<any> {
       case 'list_services':
         return await apiRequest('/partner/services')
 
-      case 'create_service':
-        return await apiRequest('/partner/services', 'POST', {
+      case 'create_service': {
+        const body: any = {
           name: args.name,
-          description: args.description,
-          base_url: args.base_url,
-        })
+          service_url: args.service_url,
+        }
+        if (args.auth_type !== undefined) body.auth_type = args.auth_type
+        if (args.endpoint_mode !== undefined) body.endpoint_mode = args.endpoint_mode
+        if (args.openapi_spec_url !== undefined) body.openapi_spec_url = args.openapi_spec_url
+        if (args.timeout_ms !== undefined) body.timeout_ms = args.timeout_ms
+        if (args.retry_attempts !== undefined) body.retry_attempts = args.retry_attempts
+        return await apiRequest('/partner/services', 'POST', body)
+      }
 
       case 'update_service': {
         const serviceId = validateId(args.service_id, 'service_id')
-        return await apiRequest(`/partner/services/${encodePath(serviceId)}`, 'PATCH', {
-          name: args.name,
-          description: args.description,
-          base_url: args.base_url,
-        })
+        const body: any = {}
+        if (args.name !== undefined) body.name = args.name
+        if (args.service_url !== undefined) body.service_url = args.service_url
+        if (args.auth_type !== undefined) body.auth_type = args.auth_type
+        if (args.endpoint_mode !== undefined) body.endpoint_mode = args.endpoint_mode
+        if (args.openapi_spec_url !== undefined) body.openapi_spec_url = args.openapi_spec_url
+        if (args.timeout_ms !== undefined) body.timeout_ms = args.timeout_ms
+        if (args.retry_attempts !== undefined) body.retry_attempts = args.retry_attempts
+        if (args.is_enabled !== undefined) body.is_enabled = args.is_enabled
+        return await apiRequest(`/partner/services/${encodePath(serviceId)}`, 'PATCH', body)
       }
 
       case 'configure_service_auth': {
